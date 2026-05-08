@@ -1,73 +1,168 @@
-# React + TypeScript + Vite
+# TaskFlow Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplikasi manajemen tugas (To-Do List) modern yang dibangun menggunakan ekosistem React. Aplikasi ini berfungsi sepenuhnya secara offline dengan mensimulasikan perilaku server sungguhan (latensi, error, dan autentikasi).
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Kategori | Teknologi |
+|---|---|
+| Framework | React 19 + TypeScript |
+| Build Tool | Vite 8 |
+| Styling | Tailwind CSS v4 |
+| State Management | Zustand 5 |
+| Data Fetching | Axios + TanStack React Query 5 |
+| Form & Validasi | React Hook Form 7 + Zod 4 |
+| Routing | React Router DOM 7 |
+| Notifikasi | React Hot Toast |
 
-## React Compiler
+## Cara Menjalankan
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prasyarat
 
-## Expanding the ESLint configuration
+- Node.js >= 18
+- npm >= 9
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Instalasi
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/<username>/taskflow-manager.git
+cd taskflow-manager
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Buka `http://localhost:5173` di browser.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Build Produksi
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
+npm run preview
 ```
+
+### Kredensial Login
+
+| Field | Value |
+|---|---|
+| Email | admin@taskflow.com |
+| Password | admin123 |
+
+## Struktur Folder
+
+```
+src/
+├── api/                    # Abstraksi Mock API
+│   ├── axios.ts            # Axios instance + interceptors
+│   ├── auth.service.ts     # Mock auth (login, verify token)
+│   └── task.service.ts     # Mock CRUD task + bulk operations
+├── components/
+│   ├── ui/                 # Komponen UI reusable
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   ├── Checkbox.tsx
+│   │   ├── Badge.tsx
+│   │   ├── Spinner.tsx
+│   │   ├── Modal.tsx
+│   │   └── Select.tsx
+│   ├── layout/             # Layout wrapper
+│   │   ├── Header.tsx
+│   │   └── AppLayout.tsx
+│   ├── task/               # Komponen terkait task
+│   │   ├── TaskForm.tsx
+│   │   ├── TaskCard.tsx
+│   │   ├── TaskList.tsx
+│   │   ├── TaskEditModal.tsx
+│   │   ├── TaskEmptyState.tsx
+│   │   └── TaskListSkeleton.tsx
+│   ├── filter/             # Search & filter
+│   │   ├── FilterBar.tsx
+│   │   └── SearchInput.tsx
+│   └── bulk/               # Bulk actions
+│       └── BulkActionBar.tsx
+├── hooks/                  # Custom hooks
+│   ├── useAuth.ts          # Auth hooks (login, logout)
+│   └── useTasks.ts         # React Query hooks (CRUD + optimistic updates)
+├── lib/                    # Utilities
+│   └── storage.ts          # Type-safe localStorage wrapper
+├── pages/                  # Halaman
+│   ├── LoginPage.tsx
+│   └── DashboardPage.tsx
+├── routes/                 # Routing
+│   ├── index.tsx           # Router config
+│   └── PrivateRoute.tsx    # Auth guard
+├── stores/                 # Zustand stores
+│   ├── auth.store.ts       # Auth state + persist
+│   ├── filter.store.ts     # Filter, search, selection state
+│   └── theme.store.ts      # Theme (light/dark/system) + persist
+├── schemas/                # Zod validation
+│   ├── auth.schema.ts
+│   └── task.schema.ts
+├── types/                  # TypeScript interfaces
+│   └── index.ts
+├── App.tsx                 # Root component + providers
+├── main.tsx                # Entry point
+└── index.css               # Global styles + animations
+```
+
+## Arsitektur
+
+### Pemisahan 3-Layer
+
+1. **UI Layer** — Komponen React murni presentational, tidak mengakses localStorage secara langsung.
+2. **State Layer** — Zustand stores hanya untuk non-server state (auth session, filter, selection, theme).
+3. **Data Layer** — React Query sebagai satu-satunya source of truth untuk data task. Mock API Service membungkus semua operasi CRUD.
+
+### Mock API
+
+Menggunakan pembungkus Promise manual sebagai pengganti database. Setiap API call memiliki:
+- Simulasi latensi 800ms-1000ms
+- ~5% chance random error pada operasi mutasi
+- Axios interceptors untuk auth header injection dan 401 handling
+
+### Optimistic Updates
+
+Semua mutations (create, update, delete, bulk) menggunakan optimistic updates:
+1. `onMutate` — Snapshot cache → update cache optimistically
+2. `onError` — Rollback ke snapshot + toast error
+3. `onSettled` — `invalidateQueries` untuk re-sync
+
+## Fitur
+
+- Login/Logout dengan mock auth (kredensial hardcoded)
+- Session persist (survive page refresh)
+- Private route guard
+- CRUD task (create, read, update, delete)
+- Edit task via modal dialog
+- Priority (Rendah/Sedang/Tinggi) dan tenggat waktu
+- Global search dengan debounce 300ms
+- Filter status (Semua/Selesai/Belum Selesai)
+- Multi-select dengan checkbox
+- Bulk actions (hapus massal, selesaikan massal)
+- Select all berdasarkan filter aktif
+- Dark mode toggle (Light/Dark/System)
+- Skeleton loading states
+- Error handling dengan toast notifications
+- Responsive design (mobile-first)
+
+## Asumsi
+
+- Aplikasi bersifat single-user (tidak ada multi-tenancy)
+- Data disimpan di localStorage, sehingga terbatas pada satu browser/device
+- Token autentikasi bersifat statis (mock), tidak memiliki expiry
+- Tidak ada sorting tugas (urutan berdasarkan waktu pembuatan, terbaru di atas)
+
+## Tantangan
+
+- **Zod v4 + React Hook Form**: Terdapat ketidakcocokan tipe antara input/output type inference dari Zod v4 dengan resolver react-hook-form. Diselesaikan dengan menggunakan `z.union()` dan menghindari `.optional().default()`.
+- **Tailwind CSS v4**: Konfigurasi dark mode variant menggunakan `@custom-variant dark` yang berbeda dari v3.
+- **Simulasi Error**: Menyeimbangkan antara mendemonstrasikan error handling tanpa membuat pengalaman pengguna terganggu (5% error rate).
+
+## Saran Improvisasi
+
+- Menambahkan fitur drag-and-drop untuk reorder task
+- Implementasi subtask/checklist di dalam task
+- Menambahkan kategori/label (tag) pada task
+- Fitur export/import data (JSON/CSV)
+- Undo action (misal: undo delete)
+- Sorting berdasarkan prioritas, tanggal, atau status
+- Animasi transisi antar halaman
