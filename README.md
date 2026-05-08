@@ -25,7 +25,7 @@ Aplikasi manajemen tugas (To-Do List) modern yang dibangun menggunakan ekosistem
 ### Instalasi
 
 ```bash
-git clone https://github.com/<username>/taskflow-manager.git
+git clone https://github.com/ryudhis/taskflow-manager.git
 cd taskflow-manager
 npm install
 npm run dev
