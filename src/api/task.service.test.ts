@@ -139,11 +139,11 @@ describe("Task Service", () => {
   });
 
   it("should perform bulk delete successfully", async () => {
-    const p1 = createTask({ title: "T1", description: "", priority: "low", dueDate: null });
+    const p1 = createTask({ title: "Task1", description: "", priority: "low", dueDate: null });
     await runAllTimers();
     const t1 = (await p1).data;
 
-    const p2 = createTask({ title: "T2", description: "", priority: "low", dueDate: null });
+    const p2 = createTask({ title: "Task2", description: "", priority: "low", dueDate: null });
     await runAllTimers();
     const t2 = (await p2).data;
 
@@ -157,11 +157,11 @@ describe("Task Service", () => {
   });
 
   it("should perform bulk complete successfully", async () => {
-    const p1 = createTask({ title: "T1", description: "", priority: "low", dueDate: null });
+    const p1 = createTask({ title: "Task1", description: "", priority: "low", dueDate: null });
     await runAllTimers();
     const t1 = (await p1).data;
 
-    const p2 = createTask({ title: "T2", description: "", priority: "low", dueDate: null });
+    const p2 = createTask({ title: "Task2", description: "", priority: "low", dueDate: null });
     await runAllTimers();
     const t2 = (await p2).data;
 
