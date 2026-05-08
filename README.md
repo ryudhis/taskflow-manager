@@ -13,6 +13,7 @@ Aplikasi manajemen tugas (To-Do List) modern yang dibangun menggunakan ekosistem
 | Data Fetching | Axios + TanStack React Query 5 |
 | Form & Validasi | React Hook Form 7 + Zod 4 |
 | Routing | React Router DOM 7 |
+| Unit Testing | Vitest + JSDOM |
 | Notifikasi | React Hot Toast |
 
 ## Cara Menjalankan
@@ -33,6 +34,16 @@ npm run dev
 
 Buka `http://localhost:5173` di browser.
 
+### Menjalankan Test
+
+```bash
+# Menjalankan semua test sekali
+npm test
+
+# Menjalankan test dalam mode watch
+npm run test:watch
+```
+
 ### Build Produksi
 
 ```bash
@@ -51,10 +62,12 @@ npm run preview
 
 ```
 src/
-├── api/                    # Abstraksi Mock API
+├── api/                    # Abstraksi Mock API & Tests
 │   ├── axios.ts            # Axios instance + interceptors
 │   ├── auth.service.ts     # Mock auth (login, verify token)
-│   └── task.service.ts     # Mock CRUD task + bulk operations
+│   ├── auth.service.test.ts
+│   ├── task.service.ts     # Mock CRUD task + bulk operations
+│   └── task.service.test.ts
 ├── components/
 │   ├── ui/                 # Komponen UI reusable
 │   │   ├── Button.tsx
@@ -82,21 +95,27 @@ src/
 ├── hooks/                  # Custom hooks
 │   ├── useAuth.ts          # Auth hooks (login, logout)
 │   └── useTasks.ts         # React Query hooks (CRUD + optimistic updates)
-├── lib/                    # Utilities
-│   └── storage.ts          # Type-safe localStorage wrapper
+├── lib/                    # Utilities & Tests
+│   ├── storage.ts          # Type-safe localStorage wrapper
+│   └── storage.test.ts
 ├── pages/                  # Halaman
 │   ├── LoginPage.tsx
 │   └── DashboardPage.tsx
 ├── routes/                 # Routing
 │   ├── index.tsx           # Router config
 │   └── PrivateRoute.tsx    # Auth guard
-├── stores/                 # Zustand stores
+├── stores/                 # Zustand stores & Tests
 │   ├── auth.store.ts       # Auth state + persist
+│   ├── auth.store.test.ts
 │   ├── filter.store.ts     # Filter, search, selection state
-│   └── theme.store.ts      # Theme (light/dark/system) + persist
+│   ├── filter.store.test.ts
+│   ├── theme.store.ts      # Theme (light/dark/system) + persist
+│   └── theme.store.test.ts
 ├── schemas/                # Zod validation
 │   ├── auth.schema.ts
 │   └── task.schema.ts
+├── test/                   # Test setup & configuration
+│   └── setup.ts
 ├── types/                  # TypeScript interfaces
 │   └── index.ts
 ├── App.tsx                 # Root component + providers
@@ -118,6 +137,14 @@ Menggunakan pembungkus Promise manual sebagai pengganti database. Setiap API cal
 - Simulasi latensi 800ms-1000ms
 - ~5% chance random error pada operasi mutasi
 - Axios interceptors untuk auth header injection dan 401 handling
+
+### Unit Testing
+
+Aplikasi mencakup unit testing yang komprehensif menggunakan **Vitest** dan **JSDOM** untuk memastikan logika bisnis berjalan dengan sesuai:
+- **API Services**: Testing skenario login, verifikasi token, dan operasi CRUD (termasuk penanganan error).
+- **Zustand Stores**: Testing perubahan state global untuk autentikasi, filter, dan tema.
+- **Utilities**: Testing integritas data pada wrapper `localStorage`.
+- **Mock Timers**: Menggunakan `vi.useFakeTimers()` untuk testing fungsi async tanpa menunggu latensi asli.
 
 ### Optimistic Updates
 
